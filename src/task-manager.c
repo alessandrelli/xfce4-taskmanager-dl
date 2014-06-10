@@ -17,6 +17,9 @@
 #include <signal.h>
 #include <sys/resource.h>
 
+/* FIXME: this include must be removed once glibc provides sched_setattr() */
+#include "sched_deadline.h"
+
 #include <glib-object.h>
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
@@ -713,3 +716,41 @@ set_priority_to_pid (guint pid, gint priority)
 	return (res == 0) ? TRUE : FALSE;
 }
 
+
+/* sched_priority is a macro defined somewhere... undef it to allow
+ * sched_priority field (of struct sched_attr) to be set
+ * TODO: try to find a better soltuion */
+#undef sched_priority
+
+gboolean
+set_reservation_to_pid (guint pid, gint bandwidth)
+{
+	gint res;
+	struct sched_attr attr;
+	attr.size = sizeof(attr);
+	attr.sched_policy = SCHED_DEADLINE;
+	attr.sched_flags = 0;
+	attr.sched_priority = 0;
+	attr.sched_period =   100000000; /* 100 ms */
+	attr.sched_deadline = 100000000; /* 100 ms */
+	attr.sched_runtime =    1000000 * bandwidth; /* bandwidth * 1 ms */
+	res = sched_setattr(pid, &attr, 0);
+	return (res == 0) ? TRUE : FALSE;
+}
+
+gboolean
+revoke_reservation_to_pid (guint pid)
+{
+	gint res;
+	struct sched_attr attr;
+	attr.size = sizeof(attr);
+	attr.sched_policy = SCHED_OTHER;
+	attr.sched_flags = 0;
+	attr.sched_nice = 0;
+	attr.sched_priority = 0;
+	attr.sched_period =   0;
+	attr.sched_deadline = 0;
+	attr.sched_runtime =   0;
+	res = sched_setattr(pid, &attr, 0);
+	return (res == 0) ? TRUE : FALSE;
+}

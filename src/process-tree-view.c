@@ -402,10 +402,47 @@ cb_set_priority (GtkMenuItem *mi, gpointer user_data)
 	}
 }
 
+static void
+cb_set_reservation (GtkMenuItem *mi, gpointer user_data)
+{
+	guint pid = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (mi), "pid"));
+	gint bandwidth = GPOINTER_TO_INT (user_data);
+
+	if (!set_reservation_to_pid (pid, bandwidth))
+	{
+		GtkWidget *dialog = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+			_("Error setting priority"));
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("An error was encountered by setting a priority to the PID %d. "
+			"It is likely you don't have the required privileges."), pid);
+		gtk_window_set_title (GTK_WINDOW (dialog), _("Task Manager"));
+		gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+	}
+}
+
+static void
+cb_revoke_reservation (GtkMenuItem *mi, gpointer user_data)
+{
+	guint pid = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (mi), "pid"));
+
+	if (!revoke_reservation_to_pid (pid))
+	{
+		GtkWidget *dialog = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+			_("Error setting priority"));
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("An error was encountered by setting a priority to the PID %d. "
+			"It is likely you don't have the required privileges."), pid);
+		gtk_window_set_title (GTK_WINDOW (dialog), _("Task Manager"));
+		gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+	}
+}
+
 static GtkWidget *
 build_context_menu (XtmProcessTreeView *treeview, guint pid)
 {
-	GtkWidget *menu, *menu_priority, *mi;
+	GtkWidget *menu, *menu_priority, *menu_reservation, *mi;
 
 	menu = gtk_menu_new ();
 
@@ -464,6 +501,57 @@ build_context_menu (XtmProcessTreeView *treeview, guint pid)
 
 	mi = gtk_menu_item_new_with_label (_("Priority"));
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (mi), menu_priority);
+	gtk_container_add (GTK_CONTAINER (menu), mi);
+
+	menu_reservation = gtk_menu_new();
+
+	mi = gtk_menu_item_new_with_label (_("None"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_revoke_reservation), NULL);
+
+	mi = gtk_menu_item_new_with_label (_("10\%"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_set_reservation), GINT_TO_POINTER (10));
+
+	mi = gtk_menu_item_new_with_label (_("20\%"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_set_reservation), GINT_TO_POINTER (20));
+
+	mi = gtk_menu_item_new_with_label (_("30\%"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_set_reservation), GINT_TO_POINTER (30));
+
+        mi = gtk_menu_item_new_with_label (_("40\%"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_set_reservation), GINT_TO_POINTER (40));
+
+	mi = gtk_menu_item_new_with_label (_("50\%"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_set_reservation), GINT_TO_POINTER (50));
+
+	mi = gtk_menu_item_new_with_label (_("60\%"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_set_reservation), GINT_TO_POINTER (60));
+
+	mi = gtk_menu_item_new_with_label (_("70\%"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_set_reservation), GINT_TO_POINTER (70));
+
+	mi = gtk_menu_item_new_with_label (_("80\%"));
+	g_object_set_data (G_OBJECT (mi), "pid", GUINT_TO_POINTER (pid));
+	gtk_container_add (GTK_CONTAINER (menu_reservation), mi);
+	g_signal_connect (mi, "activate", G_CALLBACK (cb_set_reservation), GINT_TO_POINTER (80));
+
+	mi = gtk_menu_item_new_with_label (_("Reservation"));
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (mi), menu_reservation);
 	gtk_container_add (GTK_CONTAINER (menu), mi);
 
 	gtk_widget_show_all (menu);

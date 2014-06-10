@@ -94,5 +94,7 @@ void		get_owner_uid		(guint *owner_uid, gchar **owner_uid_name);
 gchar *		get_hostname		(void);
 gboolean	send_signal_to_pid	(guint pid, gint xtm_signal);
 gboolean	set_priority_to_pid	(guint pid, gint priority);
+gboolean	set_reservation_to_pid	(guint pid, gint bandwidth);
+gboolean	revoke_reservation_to_pid	(guint pid);
 
 #endif /* !TASK_MANAGER_H */

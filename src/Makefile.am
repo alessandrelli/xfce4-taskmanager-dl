@@ -35,6 +35,7 @@ xfce4_taskmanager_SOURCES =						\
 	settings-dialog.c		settings-dialog.h		\
 	settings.c			settings.h			\
 	task-manager.c			task-manager.h			\
+	sched_deadline.h					        \
 	$(NULL)
 
 if HAVE_WNCK
