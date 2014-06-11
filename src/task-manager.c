@@ -746,7 +746,7 @@ revoke_reservation_to_pid (guint pid)
 	attr.size = sizeof(attr);
 	attr.sched_policy = SCHED_OTHER;
 	attr.sched_flags = 0;
-	attr.sched_nice = 0;
+	attr.sched_nice = getpriority(PRIO_PROCESS, pid);
 	attr.sched_priority = 0;
 	attr.sched_period =   0;
 	attr.sched_deadline = 0;
