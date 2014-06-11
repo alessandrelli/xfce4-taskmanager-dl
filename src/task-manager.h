@@ -96,5 +96,6 @@ gboolean	send_signal_to_pid	(guint pid, gint xtm_signal);
 gboolean	set_priority_to_pid	(guint pid, gint priority);
 gboolean	set_reservation_to_pid	(guint pid, gint bandwidth);
 gboolean	revoke_reservation_to_pid	(guint pid);
+gboolean	task_has_reservation	(guint pid);
 
 #endif /* !TASK_MANAGER_H */

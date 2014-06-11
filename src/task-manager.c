@@ -754,3 +754,9 @@ revoke_reservation_to_pid (guint pid)
 	res = sched_setattr(pid, &attr, 0);
 	return (res == 0) ? TRUE : FALSE;
 }
+
+gboolean
+task_has_reservation (guint pid)
+{
+	return (sched_getscheduler(pid) == SCHED_DEADLINE) ? TRUE : FALSE;
+}

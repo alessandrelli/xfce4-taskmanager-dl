@@ -503,6 +503,10 @@ build_context_menu (XtmProcessTreeView *treeview, guint pid)
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (mi), menu_priority);
 	gtk_container_add (GTK_CONTAINER (menu), mi);
 
+	if (task_has_reservation(pid)) {
+		gtk_widget_set_sensitive(mi, FALSE);
+	}
+
 	menu_reservation = gtk_menu_new();
 
 	mi = gtk_menu_item_new_with_label (_("None"));
