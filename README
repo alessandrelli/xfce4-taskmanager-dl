@@ -18,7 +18,7 @@ Libwnck 2.0 (optional)
 
 ** Building **
 
-./configure
+./autogen.sh
 make
 make install (as root if needed)
 
